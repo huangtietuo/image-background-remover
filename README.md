@@ -1,137 +1,123 @@
-# image-background-remover
+# 🖼️ BackgroundRemover.dev
 
-🚀 AI-powered image background removal web application. Remove backgrounds from any image with just a few clicks.
+> Free online AI-powered image background removal. No downloads, no ads, just clean results.
 
-## Features
+## 🚀 Features
 
-- 🖱️ **Drag & Drop** - Easily drag and drop images to upload
-- ⚡ **Fast Processing** - Powered by remove.bg API
-- 🎨 **Clean UI** - Modern React frontend with intuitive design
-- 🔒 **Privacy First** - Images are processed securely and deleted after processing
-- 📱 **Responsive** - Works on desktop and mobile devices
+- **100% Online** - No software to download, works in any browser
+- **Fast Processing** - Powered by Remove.bg API
+- **No Storage** - Images are processed in-memory, never saved on our servers
+- **Mobile Friendly** - Works great on your phone
+- **Zero Cost Hosting** - Fully hosted on Cloudflare's free tier
 
-## Project Structure
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14 + TailwindCSS + ShadCN UI
+- **Hosting**: Cloudflare Pages
+- **API Proxy**: Cloudflare Workers
+- **AI Processing**: Remove.bg API
+- **Architecture**: Zero storage, all processing in-memory
+
+## 📦 Project Structure
 
 ```
 image-background-remover/
-├── backend/          # Node.js/Express server
-├── frontend/         # React frontend application
+├── apps/
+│   ├── frontend/                    # Next.js 14 frontend
+│   │   ├── app/
+│   │   │   ├── about/               # About page
+│   │   │   ├── pricing/            # Pricing page
+│   │   │   ├── privacy/            # Privacy policy page
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx            # Homepage (upload + process)
+│   │   └── ...
+│   └── worker/                      # Cloudflare Worker API proxy
+│       ├── src/worker.js            # Rate limiting + CORS + proxy
+│       └── wrangler.toml            # Worker configuration
+├── docs/
+│   └── image-bg-remover-mvp.md      # Full MVP requirements
 ├── .gitignore
 ├── LICENSE
+├── pnpm-workspace.yaml
 └── README.md
 ```
 
-## Quick Start
+## 🚀 Getting Started
 
-### Backend Setup
+### Prerequisites
 
-1. Go to backend directory:
-```bash
-cd backend
-```
+- Node.js 18+
+- Cloudflare account (free)
+- Remove.bg API key ([get one here](https://www.remove.bg/api))
 
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create `.env` file:
-```
-PORT=3001
-REMOVE_BG_API_KEY=your_api_key_here
-NODE_ENV=development
-```
-
-4. Get your API key at [remove.bg](https://www.remove.bg/api)
-
-5. Start the server:
-```bash
-npm start
-```
-
-### Frontend Setup
-
-1. Go to frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start development server:
-```bash
-npm start
-```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## API Endpoints
-
-- `POST /api/upload` - Upload image for background removal
-- `GET /api/status/:id` - Check processing status
-- `GET /api/download/:id` - Download processed image
-
-## Deployment
-
-### Deploy to Vercel (Frontend)
+### 1. Install dependencies
 
 ```bash
-npm install -g vercel
-vercel
+# Install frontend dependencies
+cd apps/frontend && npm install
+
+# Install worker dependencies
+cd ../worker && npm install
 ```
 
-### Deploy to Heroku (Backend)
+### 2. Configure environment variables
 
-```bash
-heroku create
-git push heroku main
-heroku config:set REMOVE_BG_API_KEY=your_key
+For frontend (`apps/frontend/.env.local`):
+```
+NEXT_PUBLIC_WORKER_URL=https://your-worker.your-name.workers.dev
 ```
 
-### Deploy to Docker
-
-```bash
-docker build -t image-background-remover .
-docker run -p 3001:3001 -e REMOVE_BG_API_KEY=your_key image-background-remover
+For worker (`apps/worker/wrangler.toml`):
+```
+[vars]
+REMOVE_BG_API_KEY = "your_api_key_here"
+ALLOWED_ORIGIN = "https://your-frontend.pages.dev"
+DAILY_FREE_LIMIT = 3
 ```
 
-## Configuration
-
-| Environment Variable | Description | Required |
-|----------------------|-------------|----------|
-| `REMOVE_BG_API_KEY` | API key from remove.bg | Yes |
-| `PORT` | Port number for backend | No (default 3001) |
-| `NODE_ENV` | Environment mode | No (default development) |
-| `MAX_FILE_SIZE` | Maximum upload file size in MB | No (default 10) |
-
-## Development
+### 3. Develop locally
 
 ```bash
-# Install root dependencies (if using concurrently)
-npm install
+# Frontend
+cd apps/frontend
+npm run dev
 
-# Run both frontend and backend in development mode
+# Worker (local dev)
+cd apps/worker
 npm run dev
 ```
 
-## Tech Stack
+### 4. Deploy
 
-- **Frontend**: React, CSS3, Drag & Drop API
-- **Backend**: Node.js, Express.js, Multer
-- **AI Processing**: remove.bg API
-- **Build**: Create React App
+```bash
+# Deploy frontend to Cloudflare Pages
+npm run deploy
 
-## Screenshots
+# Deploy worker
+cd apps/worker
+npm run deploy
+```
 
-*(Add your screenshots here)*
+## 💲 Pricing
 
-## Contributing
+- 🆓 **Free**: 3 images/day for anonymous users
+- 🆓 **Free (Logged in)**: 5 images/day
+- 💵 **Day Pass**: $0.99 - Unlimited for 24h
+- ⭐ **Monthly**: $2.99 - Unlimited per month
 
-Contributions, issues, and feature requests are welcome!
+## 🔒 Privacy
 
-## License
+We **never store** your images. All processing happens in-memory on Cloudflare's edge network and is immediately discarded after processing. Read more in our [Privacy Policy](/privacy).
+
+## 📈 Roadmap
+
+- [x] MVP - Basic upload, process, download
+- [ ] IP-based rate limiting
+- [ ] Stripe payment integration
+- [ ] Google/GitHub OAuth login
+- [ ] Before/after comparison slider
+- [ ] Batch processing
+
+## 📄 License
 
 MIT © [huangtietuo](https://github.com/huangtietuo)
