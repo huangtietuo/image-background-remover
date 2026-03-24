@@ -7,7 +7,7 @@
   "scripts": {
     "dev:frontend": "cd apps/frontend && npm run dev",
     "dev:worker": "cd apps/worker && npm run dev",
-    "build": "cd apps/frontend && npm run build",
+    "build": "cd apps/frontend && bun install && npm run build",
     "deploy:frontend": "npx @cloudflare/next-on-pages@1 deploy",
     "deploy:worker": "cd apps/worker && npm run deploy",
     "deploy": "npm run deploy:worker && npm run deploy:frontend"
