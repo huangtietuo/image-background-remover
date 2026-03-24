@@ -134,8 +134,8 @@ export default {
 };
 
 function handleCors(env, response) {
-  const allowedOrigin = env.ALLOWED_ORIGIN || '*';
-  response.headers.set('Access-Control-Allow-Origin', allowedOrigin);
+  // 开发环境允许所有来源，方便调试
+  response.headers.set('Access-Control-Allow-Origin', '*');
   response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
   return response;
