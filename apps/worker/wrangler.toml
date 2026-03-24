@@ -4,7 +4,7 @@ compatibility_date = "2024-01-01"
 
 [vars]
 REMOVE_BG_API_KEY = "JVtFYBFEBzByiVhbduGmiyAb"
-ALLOWED_ORIGIN = "http://localhost:3000"
+ALLOWED_ORIGIN = "http://192.144.229.193:3100"
 DAILY_FREE_LIMIT = 3
 
 # Create a KV namespace for rate limiting:

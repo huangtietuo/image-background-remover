@@ -14,7 +14,8 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const WORKER_URL = process.env.NEXT_PUBLIC_WORKER_URL || 'http://localhost:8787';
+  // Use Next.js API proxy to avoid CORS issues when accessing from external IP
+  const API_URL = '/api/remove-background';
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -79,7 +80,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append('image', blob, 'image.png');
 
-      const apiResponse = await fetch(`${WORKER_URL}/remove-background`, {
+      const apiResponse = await fetch(API_URL, {
         method: 'POST',
         body: formData,
       });

@@ -1,0 +1,85 @@
+import { NextResponse } from 'next/server';
+
+const REMOVE_BG_API_KEY = 'JVtFYBFEBzByiVhbduGmiyAb';
+
+export async function OPTIONS() {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
+export async function POST(request) {
+  try {
+    const formData = await request.formData();
+    const imageFile = formData.get('image');
+    
+    if (!imageFile) {
+      return NextResponse.json(
+        { error: 'No image provided' },
+        { status: 400, headers: {
+          'Access-Control-Allow-Origin': '*',
+        }}
+      );
+    }
+
+    // Create new FormData for Remove.bg API
+    const apiFormData = new FormData();
+    apiFormData.append('image_file', imageFile);
+    apiFormData.append('size', 'auto');
+
+    // Directly call Remove.bg API from Next.js
+    const apiResponse = await fetch('https://api.remove.bg/v1.0/removebg', {
+      method: 'POST',
+      headers: {
+        'X-Api-Key': REMOVE_BG_API_KEY,
+      },
+      body: apiFormData,
+    });
+
+    if (!apiResponse.ok) {
+      const error = await apiResponse.json().catch(() => ({
+        error: 'API error',
+      }));
+      return NextResponse.json(error, {
+        status: apiResponse.status,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    // Stream the response directly back to client
+    const headers = new Headers();
+    apiResponse.headers.forEach((value, key) => {
+      if (!['connection', 'keep-alive', 'transfer-encoding'].includes(key.toLowerCase())) {
+        headers.set(key, value);
+      }
+    });
+    
+    headers.set('Access-Control-Allow-Origin', '*');
+    if (!headers.has('Content-Type')) {
+      headers.set('Content-Type', 'image/png');
+    }
+    if (!headers.has('Content-Disposition')) {
+      headers.set('Content-Disposition', 'attachment; filename="background-removed.png"');
+    }
+
+    return new Response(apiResponse.body, {
+      status: apiResponse.status,
+      headers: headers,
+    });
+
+  } catch (error) {
+      console.error('API error:', error);
+      return NextResponse.json(
+        { error: 'Internal server error', details: error.message },
+        { status: 500, headers: {
+          'Access-Control-Allow-Origin': '*',
+        }}
+      );
+  }
+}
