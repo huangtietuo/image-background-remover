@@ -12,7 +12,7 @@
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "wrangler": "^3.22.0"
+    "wrangler": "^4.77.0"
   },
   "author": "huangtietuo",
   "license": "MIT"
