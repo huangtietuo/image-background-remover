@@ -10,7 +10,7 @@
     "build": "pnpm install && cd apps/frontend && pnpm install && pnpm run build",
     "deploy:frontend": "npx @cloudflare/next-on-pages@1 deploy",
     "deploy:worker": "cd apps/worker && npm run deploy",
-    "deploy": "npm run deploy:worker && npm run deploy:frontend"
+    "deploy": "cd apps/worker && npm run deploy && cd ../.. && npm run deploy:frontend"
   },
   "packageManager": "pnpm@8.15.0",
   "keywords": [
