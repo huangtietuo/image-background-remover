@@ -1,4 +1,3 @@
-
 {
   "name": "image-background-remover-worker",
   "version": "1.0.0",
@@ -8,7 +7,10 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },
-  "dependencies": {},
+  "dependencies": {
+    "form-data": "^4.0.5",
+    "node-fetch": "^3.3.2"
+  },
   "devDependencies": {
     "wrangler": "^3.22.0"
   },
