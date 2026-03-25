@@ -20,6 +20,13 @@ build
 .dev.vars
 .wrangler
 
+# Vercel
+.vercel
+
+# Test files
+test.html
+test-image.jpg
+
 # Editor
 .vscode
 .idea
