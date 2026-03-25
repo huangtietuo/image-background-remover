@@ -73,15 +73,19 @@ export default function Home() {
     setError(null);
 
     try {
-      // Convert data URL to base64 string
+      // Call remove.bg API directly from frontend (exposing API key temporarily for testing)
       const base64 = originalImage.split(',')[1]; // Remove data:image/...;base64, prefix
 
-      const apiResponse = await fetch(API_URL, {
+      const apiResponse = await fetch('https://api.remove.bg/v1.0/removebg', {
         method: 'POST',
         headers: {
+          'X-Api-Key': 'JVtFYBFEBzByiVhbduGmiyAb',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imageBase64: base64 }),
+        body: JSON.stringify({
+          image_file_b64: base64,
+          size: 'auto'
+        }),
       });
 
       if (!apiResponse.ok) {
@@ -92,8 +96,9 @@ export default function Home() {
         throw new Error(error.error || 'Failed to remove background');
       }
 
-      const { imageBase64 } = await apiResponse.json();
-      const processedUrl = `data:image/png;base64,${imageBase64}`;
+      // The API returns an image directly as blob, not JSON
+      const blob = await apiResponse.blob();
+      const processedUrl = URL.createObjectURL(blob);
       setProcessedImage(processedUrl);
     } catch (err) {
       console.error('Error:', err);
