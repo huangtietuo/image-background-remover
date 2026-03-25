@@ -73,16 +73,15 @@ export default function Home() {
     setError(null);
 
     try {
-      // Convert data URL to blob
-      const response = await fetch(originalImage);
-      const blob = await response.blob();
-      
-      const formData = new FormData();
-      formData.append('image', blob, 'image.png');
+      // Convert data URL to base64 string
+      const base64 = originalImage.split(',')[1]; // Remove data:image/...;base64, prefix
 
       const apiResponse = await fetch(API_URL, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageBase64: base64 }),
       });
 
       if (!apiResponse.ok) {
@@ -93,8 +92,8 @@ export default function Home() {
         throw new Error(error.error || 'Failed to remove background');
       }
 
-      const processedBlob = await apiResponse.blob();
-      const processedUrl = URL.createObjectURL(processedBlob);
+      const { imageBase64 } = await apiResponse.json();
+      const processedUrl = `data:image/png;base64,${imageBase64}`;
       setProcessedImage(processedUrl);
     } catch (err) {
       console.error('Error:', err);
