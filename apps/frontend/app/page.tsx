@@ -14,8 +14,8 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Use Next.js API proxy to avoid CORS issues when accessing from external IP
-  const API_URL = '/api/remove-background';
+  // Use Cloudflare Worker as API proxy
+  const API_URL = process.env.NEXT_PUBLIC_WORKER_URL || 'http://localhost:8787/remove-background';
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

@@ -7,8 +7,8 @@ const http = require('http');
 const fetch = require('node-fetch');
 
 const PORT = 8787;
-const REMOVE_BG_API_KEY = "JVtFYBFEBzByiVhbduGmiyAb";
-const ALLOWED_ORIGIN = "http://localhost:3001";
+const REMOVE_BG_API_KEY = process.env.REMOVE_BG_API_KEY || "JVtFYBFEBzByiVhbduGmiyAb";
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "http://localhost:3000";
 
 function handleCors(res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
