@@ -7,7 +7,7 @@
     "dev:frontend": "cd apps/frontend && pnpm run dev",
     "dev:worker": "cd apps/worker && pnpm run dev",
     "build": "cd apps/frontend && pnpm run build",
-    "deploy:frontend": "npx @cloudflare/next-on-pages@1 deploy",
+    "deploy:frontend": "cd apps/frontend && npx @cloudflare/next-on-pages@1",
     "deploy:worker": "cd apps/worker && npx wrangler deploy",
     "deploy": "pnpm run deploy:worker && pnpm run deploy:frontend"
   },

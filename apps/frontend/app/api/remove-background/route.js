@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 const REMOVE_BG_API_KEY = 'JVtFYBFEBzByiVhbduGmiyAb';
 
 export async function OPTIONS() {
