@@ -1,5 +1,3 @@
-import { NextResponse } from 'next/server';
-
 export const runtime = 'edge';
 
 const REMOVE_BG_API_KEY = 'JVtFYBFEBzByiVhbduGmiyAb';
@@ -16,17 +14,25 @@ export async function OPTIONS() {
 
 export async function POST(request) {
   try {
+    console.log('Received request to /api/remove-background');
+
     const formData = await request.formData();
+    console.log('Form data parsed successfully');
+
     const imageFile = formData.get('image');
-    
+
     if (!imageFile) {
-      return NextResponse.json(
-        { error: 'No image provided' },
-        { status: 400, headers: {
+      console.log('No image provided');
+      return new Response(JSON.stringify({ error: 'No image provided' }), {
+        status: 400,
+        headers: {
           'Access-Control-Allow-Origin': '*',
-        }}
-      );
+          'Content-Type': 'application/json',
+        },
+      });
     }
+
+    console.log('Image received, calling remove.bg API...');
 
     // Create new FormData for Remove.bg API
     const apiFormData = new FormData();
@@ -42,17 +48,27 @@ export async function POST(request) {
       body: apiFormData,
     });
 
+    console.log('remove.bg API response status:', apiResponse.status);
+
     if (!apiResponse.ok) {
-      const error = await apiResponse.json().catch(() => ({
-        error: 'API error',
-      }));
-      return NextResponse.json(error, {
+      console.log('remove.bg API error response');
+      let error;
+      try {
+        error = await apiResponse.json();
+      } catch (e) {
+        const text = await apiResponse.text();
+        error = { error: 'API error', details: text };
+      }
+      return new Response(JSON.stringify(error), {
         status: apiResponse.status,
         headers: {
           'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
         },
       });
     }
+
+    console.log('Streaming response back to client');
 
     // Stream the response directly back to client
     const headers = new Headers();
@@ -61,7 +77,7 @@ export async function POST(request) {
         headers.set(key, value);
       }
     });
-    
+
     headers.set('Access-Control-Allow-Origin', '*');
     if (!headers.has('Content-Type')) {
       headers.set('Content-Type', 'image/png');
@@ -76,12 +92,16 @@ export async function POST(request) {
     });
 
   } catch (error) {
-      console.error('API error:', error);
-      return NextResponse.json(
-        { error: 'Internal server error', details: error.message },
-        { status: 500, headers: {
-          'Access-Control-Allow-Origin': '*',
-        }}
-      );
+    console.error('Fatal error in /api/remove-background:', error);
+    return new Response(JSON.stringify({
+      error: 'Internal server error',
+      details: error.message,
+    }), {
+      status: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
