@@ -7,43 +7,25 @@ export async function OPTIONS() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   });
 }
 
-function arrayBufferToBase64(buffer) {
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
 export async function POST(request) {
   try {
-    const { imageBase64 } = await request.json();
+    const formData = await request.formData();
+    const imageFile = formData.get('image');
 
-    if (!imageBase64) {
+    if (!imageFile) {
       return NextResponse.json(
         { error: 'No image provided' },
-        {
-          status: 400,
-          headers: { 'Access-Control-Allow-Origin': '*' }
-        }
+        { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } }
       );
     }
 
-    const binaryString = atob(imageBase64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    const blob = new Blob([bytes], { type: 'image/png' });
-
     const apiFormData = new FormData();
-    apiFormData.append('image_file', blob, 'image.png');
+    apiFormData.append('image_file', imageFile, 'image.png');
     apiFormData.append('size', 'auto');
 
     const apiResponse = await fetch('https://api.remove.bg/v1.0/removebg', {
@@ -68,25 +50,22 @@ export async function POST(request) {
       });
     }
 
-    const arrayBuffer = await apiResponse.arrayBuffer();
-    const base64Res = arrayBufferToBase64(arrayBuffer);
-
-    return NextResponse.json(
-      { imageBase64: base64Res },
-      {
-        status: 200,
-        headers: { 'Access-Control-Allow-Origin': '*' }
-      }
-    );
+    const imageBlob = await apiResponse.blob();
+    
+    return new Response(imageBlob, {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/png',
+        'Content-Disposition': 'attachment; filename="background-removed.png"',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
 
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
       { error: 'Internal server error', details: error.message },
-      {
-        status: 500,
-        headers: { 'Access-Control-Allow-Origin': '*' }
-      }
+      { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } }
     );
   }
 }
