@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 const REMOVE_BG_API_KEY = 'JVtFYBFEBzByiVhbduGmiyAb';
 
 export async function OPTIONS() {
@@ -51,7 +53,7 @@ export async function POST(request) {
     }
 
     const imageBlob = await apiResponse.blob();
-    
+
     return new Response(imageBlob, {
       status: 200,
       headers: {

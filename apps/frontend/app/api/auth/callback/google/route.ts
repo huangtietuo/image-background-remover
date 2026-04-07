@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
-// Google OAuth callback handler
+export const runtime = 'edge';
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -25,8 +26,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // For local testing, we'll simulate a successful login
-    // In production, you would exchange the code for an access token with Google
     const mockUser = {
       id: 1,
       google_id: 'test_google_id',
@@ -38,7 +37,6 @@ export async function GET(request: Request) {
       last_reset_date: new Date().toISOString().split('T')[0]
     };
 
-    // Create a response with a success parameter
     const response = NextResponse.redirect(
       new URL('/?success=login', request.url)
     );
@@ -53,13 +51,11 @@ export async function GET(request: Request) {
   }
 }
 
-// Handle POST requests as well (for OAuth 2.0 implicit flow)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     console.log('Google OAuth POST callback:', body);
 
-    // This is typically used for token exchange or other OAuth flows
     return NextResponse.json({
       success: true,
       message: 'Callback received',
