@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
-
 const REMOVE_BG_API_KEY = 'JVtFYBFEBzByiVhbduGmiyAb';
 
 export async function OPTIONS() {
@@ -14,35 +12,40 @@ export async function OPTIONS() {
   });
 }
 
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export async function POST(request) {
   try {
-    console.log('Received request to /api/remove-background');
-
     const { imageBase64 } = await request.json();
-    console.log('imageBase64 received:', !!imageBase64);
 
     if (!imageBase64) {
       return NextResponse.json(
         { error: 'No image provided' },
         {
           status: 400,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          }
+          headers: { 'Access-Control-Allow-Origin': '*' }
         }
       );
     }
 
-    // Convert base64 to Blob
-    const buffer = Buffer.from(imageBase64, 'base64');
-    const blob = new Blob([buffer]);
+    const binaryString = atob(imageBase64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: 'image/png' });
 
-    // Create new FormData for Remove.bg API
     const apiFormData = new FormData();
     apiFormData.append('image_file', blob, 'image.png');
     apiFormData.append('size', 'auto');
 
-    // Directly call Remove.bg API from Next.js
     const apiResponse = await fetch('https://api.remove.bg/v1.0/removebg', {
       method: 'POST',
       headers: {
@@ -50,8 +53,6 @@ export async function POST(request) {
       },
       body: apiFormData,
     });
-
-    console.log('remove.bg API response status:', apiResponse.status);
 
     if (!apiResponse.ok) {
       let error;
@@ -61,28 +62,20 @@ export async function POST(request) {
         const text = await apiResponse.text();
         error = { error: 'API error', details: text };
       }
-      return NextResponse.json(
-        error,
-        {
-          status: apiResponse.status,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          }
-        }
-      );
+      return NextResponse.json(error, {
+        status: apiResponse.status,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      });
     }
 
-    // Convert to base64 and return as JSON
-    const bufferRes = await apiResponse.arrayBuffer();
-    const base64Res = Buffer.from(bufferRes).toString('base64');
+    const arrayBuffer = await apiResponse.arrayBuffer();
+    const base64Res = arrayBufferToBase64(arrayBuffer);
 
     return NextResponse.json(
       { imageBase64: base64Res },
       {
         status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        }
+        headers: { 'Access-Control-Allow-Origin': '*' }
       }
     );
 
@@ -92,9 +85,7 @@ export async function POST(request) {
       { error: 'Internal server error', details: error.message },
       {
         status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        }
+        headers: { 'Access-Control-Allow-Origin': '*' }
       }
     );
   }
