@@ -1,0 +1,22 @@
+name = "image-background-remover"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+REMOVE_BG_API_KEY = "JVtFYBFEBzByiVhbduGmiyAb"
+ALLOWED_ORIGIN = "http://192.144.229.193:3000"
+DAILY_FREE_LIMIT = 3
+
+# Create a KV namespace for rate limiting:
+# wrangler kv:namespace create RATE_LIMIT_KV
+# [[kv-namespace]]
+# binding = "RATE_LIMIT_KV"
+# id = "your-kv-namespace-id-here"
+
+# D1 database for user storage:
+# Run: wrangler d1 create background_remover_users
+# Then fill in the database_id below
+[[d1_databases]]
+binding = "DB"
+database_name = "background_remover_users"
+database_id = "8077f682-38f9-4c68-8c9c-2c10cf2f0fd9"

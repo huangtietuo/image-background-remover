@@ -1,0 +1,50 @@
+# Dependencies
+node_modules
+*/node_modules
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Next.js
+.next
+out
+build
+
+# Environment variables
+*.env
+*.env.local
+*.env.development.local
+*.env.production.local
+
+# Wrangler
+.dev.vars
+.wrangler
+wrangler.toml.backup
+
+# Vercel
+.vercel
+
+# Test files
+test.html
+test-image.jpg
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage
+.nyc_output

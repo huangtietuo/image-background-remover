@@ -1,0 +1,29 @@
+{
+  "name": "image-background-remover",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Free online image background removal - Cloudflare native",
+  "scripts": {
+    "dev:frontend": "cd apps/frontend && pnpm run dev",
+    "dev:worker": "cd apps/worker && pnpm run dev",
+    "build": "cd apps/frontend && pnpm run build && npx @cloudflare/next-on-pages@1 && cd ../.. && rm -rf out && mkdir -p out && cp -r apps/frontend/.vercel/output/static/* out/",
+    "deploy:frontend": "cd apps/frontend && npx @cloudflare/next-on-pages@1",
+    "deploy:worker": "cd apps/worker && npx wrangler deploy",
+    "deploy": "cd apps/frontend && npx @cloudflare/next-on-pages@1",
+    "postinstall": "cd apps/frontend && echo 'Frontend ready'"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "keywords": [
+    "image",
+    "background-removal",
+    "ai",
+    "cloudflare",
+    "serverless"
+  ],
+  "author": "huangtietuo",
+  "license": "MIT",
+  "dependencies": {
+    "form-data": "^4.0.5",
+    "node-fetch": "^2.7.0"
+  }
+}

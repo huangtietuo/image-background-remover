@@ -1,0 +1,19 @@
+{
+  "name": "image-background-remover-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for proxying Remove.bg API requests",
+  "main": "src/worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "form-data": "^4.0.5",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "wrangler": "^4.77.0"
+  },
+  "author": "huangtietuo",
+  "license": "MIT"
+}
