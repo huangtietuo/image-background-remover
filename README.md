@@ -9,6 +9,7 @@
 - **No Storage** - Images are processed in-memory, never saved on our servers
 - **Mobile Friendly** - Works great on your phone
 - **Zero Cost Hosting** - Fully hosted on Cloudflare's free tier
+- **Google Sign-in** - Secure authentication with Google OAuth
 
 ## 🛠️ Tech Stack
 
@@ -16,6 +17,7 @@
 - **Hosting**: Cloudflare Pages
 - **API Proxy**: Cloudflare Workers
 - **AI Processing**: Remove.bg API
+- **Authentication**: Google OAuth 2.0
 - **Architecture**: Zero storage, all processing in-memory
 
 ## 📦 Project Structure
