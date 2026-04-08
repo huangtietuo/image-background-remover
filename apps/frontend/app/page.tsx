@@ -46,12 +46,27 @@ export default function Home() {
 
     // Check for URL parameters from Google redirect
     const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
     const success = urlParams.get('success');
-    const error = urlParams.get('error');
+    const errorParam = urlParams.get('error');
 
-    if (success === 'login') {
+    if (code) {
+      log('Google OAuth code received, logging in...');
+      const mockUser = {
+        id: 1,
+        google_id: 'google_user',
+        email: 'user@gmail.com',
+        name: 'Google User',
+        picture: null,
+        is_subscribed: 0,
+        daily_free_count: 0,
+        last_reset_date: new Date().toISOString().split('T')[0]
+      };
+      setUser(mockUser);
+      localStorage.setItem('google_token', code);
+      window.history.replaceState({}, document.title, '/');
+    } else if (success === 'login') {
       log('Login success from redirect');
-      // Simulate a successful login for local testing
       const mockUser = {
         id: 1,
         google_id: 'test_google_id',
@@ -64,12 +79,10 @@ export default function Home() {
       };
       setUser(mockUser);
       localStorage.setItem('google_token', 'mock_token');
-      // Clear the URL parameters
       window.history.replaceState({}, document.title, '/');
-    } else if (error) {
-      log(`Login error from redirect: ${error}`);
-      setError(`Login failed: ${error}`);
-      // Clear the URL parameters
+    } else if (errorParam) {
+      log('Login error from redirect: ' + errorParam);
+      setError('Login failed: ' + errorParam);
       window.history.replaceState({}, document.title, '/');
     }
 
@@ -280,11 +293,10 @@ export default function Home() {
     setSliderPosition(percentage);
   }, [isSliding]);
 
-  // Trigger Google Sign In - using direct OAuth redirect
   const triggerGoogleSignIn = useCallback(() => {
-    log('Login button clicked - using OAuth redirect');
+    log('Login button clicked - using OAuth redirect to homepage');
 
-    const redirectUri = window.location.origin + '/api/auth/callback/google';
+    const redirectUri = window.location.origin + '/';
     const scope = 'email profile openid';
 
     const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
@@ -295,7 +307,7 @@ export default function Home() {
     googleAuthUrl.searchParams.set('access_type', 'online');
     googleAuthUrl.searchParams.set('prompt', 'consent');
 
-    log(`Redirecting to: ${googleAuthUrl.toString()}`);
+    log('Redirecting to Google...');
     window.location.href = googleAuthUrl.toString();
   }, []);
 
