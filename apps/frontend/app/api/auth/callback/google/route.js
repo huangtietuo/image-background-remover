@@ -1,24 +1,20 @@
-import { NextResponse } from 'next/server';
-
 export const runtime = 'edge';
 
 export async function GET(request) {
-  try {
-    const url = new URL(request.url);
-    const code = url.searchParams.get('code');
-    const error = url.searchParams.get('error');
+  const url = new URL(request.url);
+  const code = url.searchParams.get('code');
+  const error = url.searchParams.get('error');
 
-    if (error) {
-      return NextResponse.redirect(new URL(`/?error=${error}`, request.url));
-    }
+  let redirectUrl = '/?success=login';
 
-    if (!code) {
-      return NextResponse.redirect(new URL('/?error=no_code', request.url));
-    }
-
-    return NextResponse.redirect(new URL('/?success=login', request.url));
-
-  } catch (err) {
-    return NextResponse.redirect(new URL('/?error=callback_failed', request.url));
+  if (error) {
+    redirectUrl = '/?error=' + encodeURIComponent(error);
+  } else if (!code) {
+    redirectUrl = '/?error=no_code';
   }
+
+  return new Response(null, {
+    status: 302,
+    headers: { Location: redirectUrl }
+  });
 }
