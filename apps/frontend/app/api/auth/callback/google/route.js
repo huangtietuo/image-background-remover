@@ -5,16 +5,22 @@ export async function GET(request) {
   const code = url.searchParams.get('code');
   const error = url.searchParams.get('error');
 
-  let redirectUrl = '/?success=login';
-
   if (error) {
-    redirectUrl = '/?error=' + encodeURIComponent(error);
-  } else if (!code) {
-    redirectUrl = '/?error=no_code';
+    return new Response(null, {
+      status: 302,
+      headers: { Location: '/?error=oauth_error' }
+    });
+  }
+
+  if (!code) {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: '/?error=no_code' }
+    });
   }
 
   return new Response(null, {
     status: 302,
-    headers: { Location: redirectUrl }
+    headers: { Location: '/?success=login' }
   });
 }
